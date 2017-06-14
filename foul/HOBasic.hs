@@ -51,5 +51,5 @@ mkFun f = VApp (HFun f) []
 
 num :: Int -> Expr
 num 0 = ECon "Ze" 
-num (n+1) = EApp (ECon "Su") (num n)
+num n = EApp (ECon "Su") (num (n - 1))
 

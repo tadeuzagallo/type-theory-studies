@@ -15,9 +15,9 @@ instance CheckFun Fcase where
 	    do t' <- elookup x xts
                Data dalts <- elookup t' ds
 	       checkAlts alts dalts
-	       where checkAlts :: [((Cid,[Vid]),Case) ] -> [ (Cid,[Tid]) ] -> Error ()
+	       where checkAlts :: [(Cid,([Vid],Case)) ] -> [ (Cid,[Tid]) ] -> Error ()
 		     checkAlts [] [] = return ()
-		     checkAlts (((c,xs),ce):alts) ((c',ts):dalts) =
+		     checkAlts ((c,(xs,ce)):alts) ((c',ts):dalts) =
 			 do ensure (c==c') ("expected "++c'++" found "++c)
 			    ensure ((length xs)==(length ts)) (c++" wrong arity")
 			    checkCe (Ctxt ((zip xs ts)++xts)) t ce

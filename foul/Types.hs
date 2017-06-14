@@ -1,11 +1,21 @@
 module Types where
 import Basic
+import Control.Monad
 
 data Error a = Ok a | Error String
 	       deriving Show
 
+instance Functor Error where
+  fmap f (Ok a) = Ok (f a)
+  fmap f (Error str) = Error str
+
+instance Applicative Error where
+  pure = return
+  (<*>) = ap
+
 instance Monad Error where
     return a = Ok a
+
     (Ok a) >>= f = f a
     (Error msg) >>= f = Error msg
     fail msg = Error msg

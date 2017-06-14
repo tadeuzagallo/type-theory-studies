@@ -46,15 +46,15 @@ match (PCon c ps) (VApp (HCon c') vs)
 
 --- example
 
-mkFun :: Fdef -> Val Fdef
-mkFun f = VApp (HFun f) []
+mkFun' :: Fdef -> Val Fdef
+mkFun' f = VApp (HFun f) []
 
 add' = Fdef [Line ([PCon "Ze" [],PVar "m"],EVar "m"),
  	     Line ([PCon "Su" [PVar "n"],PVar "m"],
 		   (EApp (ECon "Su") (EApp (EApp (EVar "add") (EVar "n")) (EVar "m"))))]
 
 add :: (Vid,Val Fdef )
-add = ("add",mkFun add')
+add = ("add",mkFun' add')
 run_add = eval (Env [add])
 
 test_add m n = run_add (EApp (EApp (EVar "add") (num m)) (num n))

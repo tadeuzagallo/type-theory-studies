@@ -2,7 +2,7 @@ module Case where
 import Basic
 
 data Case = CExpr Expr
-	  | Case Vid [(Cid,([Vid],Case)) ]
+	  | Case Vid [(Cid,([Vid],Case))]
 
 instance Show Case where
     show (CExpr e) = "("++(show e)++")"
