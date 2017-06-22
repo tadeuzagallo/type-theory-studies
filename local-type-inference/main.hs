@@ -1,7 +1,6 @@
 import Control.Monad (when, zipWithM)
 import Control.Monad.Except (throwError)
 import Data.List ((\\), intersect, union, groupBy, intercalate)
-import Debug.Trace
 
 data Type
   = TVar String
@@ -77,7 +76,6 @@ TBot <: _ = True
 
 -- S-Fun
 (TFun v1 p1 t1) <: (TFun v2 p2 t2) =
-  trace (show t1  ++ " <: " ++ show t2) $
   v1 == v2 && all (uncurry (<:)) (zip p2 p1) && t1 <: t2
 
 _ <: _ = False
@@ -122,9 +120,8 @@ infer ctx (App f t e) = do
     -- App-InfAlg
     ([], TFun x@(_:_) t r) -> do
       s <- mapM (infer ctx) e
-      d <- zipWithM (constraintGen [] x) t s
+      d <- zipWithM (constraintGen [] x) s t
       let c = foldl meet [] d
-      trace (show c) (return ())
       s <- mapM (getSubst r) c
       return $ subst' s r
 
@@ -160,7 +157,7 @@ elimU v (TVar x)
 
 -- VU-Fun
 elimU v (TFun x s t) =
-  let u = map (elimD v) u in
+  let u = map (elimD v) s in
   let r = elimU v t in
   TFun x u r
 
@@ -205,7 +202,7 @@ constraintGen v x (TVar y) s | y `elem` x && fv s `intersect` x == [] =
 -- CG-Lower
 constraintGen v x s (TVar y) | y `elem` x && fv s `intersect` x == [] =
   let t = elimU v s in
-    return [Constraint t y TTop]
+  return [Constraint t y TTop]
 
 -- CG-Refl
 constraintGen v x (TVar y) (TVar y') | y == y' && y `notElem` x =
@@ -273,7 +270,6 @@ type Substitution = (String, Type)
 getSubst :: Type -> Constraint -> Result Substitution
 getSubst r (Constraint s x t) =
   let m = (variance x r) in
-  trace (show m ++ " " ++ show x ++ " " ++ show r) $
   case m of
     Constant -> return (x, s)
     Covariant -> return (x, s)
