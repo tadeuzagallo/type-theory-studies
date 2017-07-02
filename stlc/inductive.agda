@@ -1,3 +1,5 @@
+module Inductive where
+
 open import Data.Nat using (ℕ; _+_; suc; zero)
 open import Function using (_∘_)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl)
@@ -152,3 +154,12 @@ double' = ε [ double ] -- A closed term, in an empty environment
 
 doubleTest : double' 3 ≡ 6
 doubleTest = refl
+
+add : Closed (nat ⇒ nat ⇒ nat)
+add = lam nat (lam nat (var zero ⊕ var (succ zero)))
+
+add' : ⟦ nat ⇒ nat ⇒ nat ⟧
+add' = ε [ add ] -- A closed term, in an empty environment
+
+addTest : add' 2 3 ≡ 5
+addTest = refl
